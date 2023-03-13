@@ -55,7 +55,7 @@ def main():
         # data = load_audio_file(data_path + f)
         data, _ = librosa.load(file_path, sr=sr)
         file_name = f.replace(".wav", "")
-        test = reverb(data, sr, 80)
+        test = reverb(data, sr, 120)
         save_file_name = file_name + ".stretch" + ".wn" + str(1)
         wn_data_path = output_path + save_file_name + ".wav"
         # plot_time_series(data_wn, wn_img_data_path)
@@ -120,9 +120,46 @@ def stretch(data, rate=1):
 def pitch_shift(data, sample_rate, shift):
     """
     ピッチ変更
+    +12:1オクターブ上
+    -12:1オクターブ下
+    +7:完全５度
+    +5:完全４度
     """
     ret = librosa.effects.pitch_shift(data, sample_rate, shift, bins_per_octave=12, res_type='kaiser_best')
     return ret
+
+
+def time_shift(data, shift):
+    """
+    タイムシフト
+    """
+    data_roll = np.roll(data, shift)
+    return data_roll
+
+
+def reverb(data, sample_rate, rate):
+    """
+    残響
+    """
+    tfm = sox.Transformer()
+    tfm.reverb(rate)
+    return tfm.build_array(input_array=data, sample_rate_in=sample_rate)
+
+
+def volume_change(data, vol_size):
+    """
+    ボリューム変更
+    """
+    data_vol = data * vol_size
+    return data_vol
+
+
+def normlize(data):
+    """
+    ノーマライズ（正規化）
+    """
+    data_norm = librosa.util.normalize(data)
+    return data_norm
 
 
 def get_totlal_time(file_path, time):
@@ -150,6 +187,7 @@ def get_totlal_time(file_path, time):
     print("Frames : ", frames)
     print("Number of cut : ", num_cut)
     return total_time
+
 
 def write_wav(file_path, time):
     """
@@ -217,15 +255,6 @@ def file_time_check(file_path, time):
         elif cnt >= 2:
             print("エラー")
             break
-
-
-def reverb(data, sample_rate, rate):
-    """
-    残響
-    """
-    tfm = sox.Transformer()
-    tfm.reverb(rate)
-    return tfm.build_array(input_array=data, sample_rate_in=sample_rate)
 
 
 if __name__ == "__main__":

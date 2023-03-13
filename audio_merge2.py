@@ -44,7 +44,7 @@ def main():
     audio_files = os.listdir(target_data_path)
     print("音声ファイル数 : ", str(len(audio_files)))
     # 環境音ファイル一覧取得
-    target_sound_env_path = "./sound_environment/"
+    target_sound_env_path = "./data/sound_environment/"
     sound_env_path_files = os.listdir(target_sound_env_path)
     print("環境音ファイル数 : ", str(len(sound_env_path_files)))
     audio_save_path = "./data/audio/"
